@@ -1,17 +1,17 @@
 #!/usr/bin/python 
 
 import socket 
-host = '' 
-port = 7000 
-addr = (host, port) 
-serv_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-serv_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) 
-serv_socket.bind(addr) 
-serv_socket.listen(10) 
-print('aguardando conexao') 
-con, cliente = serv_socket.accept() 
-print('conectado')
+
+# Criar um soquete UDP
+# Observe o uso de SOCK_DGRAM para pacotes UDP
+serv_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
+
+# Atribuir endereço IP e número de porta ao soquete
+serv_socket.bind(('', 7000)) 
+
 print("aguardando mensagem") 
-recebe = con.recv(1024) 
-print("mensagem recebida: "+ recebe.decode())
-serv_socket.close()
+
+# Recebendo o pacote do cliente junto com o endereço de onde ele está vindo
+message, address = serv_socket.recvfrom(1024)
+
+print("mensagem recebida: "+ message.decode())
