@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import socket 
+# colocar o ip do pc aqui
 # ip = input('digite o ip de conexao: ') 
 ip = '192.168.0.108' 
 port = 7000 
