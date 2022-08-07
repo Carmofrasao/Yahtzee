@@ -4,7 +4,7 @@ import socket
 # colocar o ip do pc aqui
 # ip = input('digite o ip de conexao: ') 
 ip = '192.168.0.108' 
-port = 7000 
+port = 7001
 addr = ((ip,port)) 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
 client_socket.connect(addr) 
