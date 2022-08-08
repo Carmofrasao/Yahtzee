@@ -62,7 +62,7 @@ while True:
         else:
             print('O jogador '+ mensage['ganhador'] + ' perdeu a aposta')
         mensage['cont_resul'] += 1
-        # se não for o jogador, passa pro proximo
+        # passa pro proximo
         addr = ((ip,7000))
 
         # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO
