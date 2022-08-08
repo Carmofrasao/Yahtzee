@@ -15,6 +15,9 @@ jogador = {
     'sec'    : 1,
 }
 
+def jogada():
+    return 1
+
 while True:
     # Criar um soquete UDP
     # Observe o uso de SOCK_DGRAM para pacotes UDP
@@ -28,6 +31,20 @@ while True:
 
     # DESCONVERTENDO BYTES PARA DICIONARIO
     mensage = json.loads(mensage.decode('utf-8'))
+
+    if(mensage['contador'] == 0 and mensage['cont_resul'] < 4 and mensage['ganhador'] != jogador['numero']):
+        if mensage['resultado'] == 1:
+            print('O jogador '+ mensage['ganhador'] + ' ganhou a aposta')
+        else:
+            print('O jogador '+ mensage['ganhador'] + ' perdeu a aposta')
+        mensage['cont_resul'] += 1
+        # se não for o jogador, passa pro proximo
+        addr = ((ip,7003))
+
+        # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO
+        client_socket.sendto(json.dumps(mensage,indent=2).encode('utf-8'), addr) 
+
+        continue
 
     if mensage['contador'] != 0:
         # caso ainda esteja recolhendo as jogadas
@@ -53,7 +70,10 @@ while True:
                     'jogada'  : mensage['jogada'],
                     'aposta'  : jogador['aposta'],
                     'contador': mensage['contador'],
-                    'troca'   : 0,
+                    'resultado' : 0,
+                    'ganhador'  : '', 
+                    'cont_resul': 1,
+                    'troca'     : 0,
                 }
 
             addr = ((ip,7003))
@@ -66,7 +86,9 @@ while True:
                 # verifica se o jogador atual é quem vai fazer a jogada
                 print('O jogador ' + jogador['numero'] + ' vai jogar')
                 # AQUI DEVE SER FEITO O ROLE DAS JOGADAS
+                mensage['resultado'] = jogada()
                 mensage['contador'] = 0
+                mensage['ganhador'] = jogador['numero']
                 addr = ((ip,7003))
 
                 # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO
@@ -105,8 +127,11 @@ while True:
                 'jogador' : jogador['numero'],
                 'jogada'  : jogador['jogada'],
                 'aposta'  : jogador['aposta'],
-                'contador': 1,
-                'troca'   : 0,
+                'resultado' : 0,
+                'ganhador'  : '', 
+                'contador'  : 1,
+                'cont_resul': 1,
+                'troca'     : 0,
             }
 
             addr = ((ip,7003))
