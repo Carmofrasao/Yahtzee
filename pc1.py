@@ -52,10 +52,11 @@ while True:
 
     if mensage['contador'] != 0:
         # caso ainda esteja recolhendo as jogadas
-
-        print('O jogador ' + mensage['jogador'] + ' jogou ' + mensage['jogada'] + ', apostando ' + str(mensage['aposta']) + ' ficha(s)')
         
         if mensage['contador'] < 4:
+
+            print('O jogador ' + mensage['jogador'] + ' jogou ' + mensage['jogada'] + ', apostando ' + str(mensage['aposta']) + ' ficha(s)')
+
             # caso nao tenha passado por todos os jogadores recolhendo suas jogadas
             mensage['contador'] += 1
 
@@ -93,7 +94,6 @@ while True:
                 client_socket.sendto(json.dumps(mensage,indent=2).encode('utf-8'), addr) 
             else:
                 # se não for o jogador, passa pro proximo
-                print('A jogada deve ser passada para o jogador que apostou '+ str(mensage['aposta']))
                 addr = ((ip,7000))
 
                 # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO
