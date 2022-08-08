@@ -2,29 +2,44 @@
 
 import socket 
 
-# Criar um soquete UDP
-# Observe o uso de SOCK_DGRAM para pacotes UDP
-serv_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
+pc3 = {
+    'bastao' : 0, 
+    'jogada' : '',
+    'aposta' : '',
+    'fichas' : 6,
+    'sec'    : 1,
+}
 
-# Atribuir endereço IP e número de porta ao soquete
-serv_socket.bind(('', 7001)) 
+while True:
+    # Criar um soquete UDP
+    # Observe o uso de SOCK_DGRAM para pacotes UDP
+    serv_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
 
-print("aguardando mensagem") 
+    # Atribuir endereço IP e número de porta ao soquete
+    serv_socket.bind(('', 7001)) 
 
-# Recebendo o pacote do cliente junto com o endereço de onde ele está vindo
-message, address = serv_socket.recvfrom(1024)
+    print("aguardando jogada do jogador 2") 
 
-print("mensagem recebida: "+ message.decode())
+    # Recebendo o pacote do cliente junto com o endereço de onde ele está vindo
+    mensage, address = serv_socket.recvfrom(1024)
+
+    print(mensage.decode())
 
 
 
-# Criar um soquete UDP
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
+    # Criar um soquete UDP
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
 
-mensagem = input("digite uma mensagem para enviar ao servidor: ") 
+    cobrir = input("Deseja cobrir? (S/N) ")
+    if cobrir == 'S':
+        pc3['aposta'] = input("Informe quantas fichas deseja apostar: ")
 
-addr = (('192.168.0.108',7002))
+        mensage = 'O jogador 3 jogou ' + pc3['jogada'] + ', apostando ' + pc3['aposta'] + ' ficha(s)' 
 
-client_socket.sendto(mensagem.encode(), addr) 
+        addr = (('192.168.0.108',7002))
+        client_socket.sendto(mensage.encode(), addr) 
 
-print('mensagem enviada') 
+        continue
+
+    addr = (('192.168.0.108',7002))
+    client_socket.sendto(mensage, addr) 
