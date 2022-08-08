@@ -87,6 +87,10 @@ while True:
                 print('O jogador ' + jogador['numero'] + ' vai jogar')
                 # AQUI DEVE SER FEITO O ROLE DAS JOGADAS
                 mensage['resultado'] = jogada()
+                if(mensage['resultado'] == 1):
+                    print('PARABENS, VOCÊ GANHOU!')
+                else:
+                    print('NÃO FOI DESSA VEZ, VOCÊ PERDEU')
                 mensage['contador'] = 0
                 mensage['ganhador'] = jogador['numero']
                 addr = ((ip,7002))
