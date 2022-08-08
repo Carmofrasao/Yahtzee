@@ -7,7 +7,7 @@ jogador = {
     'numero' : '2',
     'bastao' : 0, 
     'jogada' : '',
-    'aposta' : '',
+    'aposta' : 0,
     'fichas' : 6,
     'sec'    : 1,
 }
@@ -28,24 +28,31 @@ while True:
     # DESCONVERTENDO BYTES PARA DICIONARIO
     mensage = json.loads(mensage.decode('utf-8'))
 
-    print('O jogador ' + mensage['jogador'] + ' jogou ' + mensage['jogada'] + ', apostando ' + mensage['aposta'] + ' ficha(s)')
+    print('O jogador ' + mensage['jogador'] + ' jogou ' + mensage['jogada'] + ', apostando ' + str(mensage['aposta']) + ' ficha(s)')
 
+    if mensage['contador'] < 4:
+        
+        mensage['contador'] += 1
+        # Criar um soquete UDP
+        client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
 
+        cobrir = input("Deseja cobrir? (S/N) ")
+        if cobrir == 'S':
+            jogador['aposta'] = mensage['aposta'] + 1
+            
+            mensage = {
+                'jogador' : jogador['numero'],
+                'jogada'  : mensage['jogada'],
+                'aposta'  : jogador['aposta'],
+                'contador': mensage['contador'],
+            }
 
-    # Criar um soquete UDP
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
+        addr = (('192.168.0.108',7001))
 
-    cobrir = input("Deseja cobrir? (S/N) ")
-    if cobrir == 'S':
-        jogador['aposta'] = input("Informe quantas fichas deseja apostar: ")
-
-        mensage = {
-            'jogador' : jogador['numero'],
-            'jogada'  : mensage['jogada'],
-            'aposta'  : jogador['aposta'],
-        }
-
-    addr = (('192.168.0.108',7001))
-
-    # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO
-    client_socket.sendto(json.dumps(mensage,indent=2).encode('utf-8'), addr) 
+        # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO
+        client_socket.sendto(json.dumps(mensage,indent=2).encode('utf-8'), addr) 
+    else:
+        if jogador['aposta'] == mensage['aposta']:
+            print('o jogador ' + jogador['numero'] + ' vai jogar')
+        else:
+            print('A jogada deve ser passada para o jogador que apostou '+ str(mensage['aposta']))
