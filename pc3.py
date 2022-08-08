@@ -52,6 +52,7 @@ while True:
                     'jogada'  : mensage['jogada'],
                     'aposta'  : jogador['aposta'],
                     'contador': mensage['contador'],
+                    'troca'   : 0,
                 }
 
             addr = ((ip,7002))
@@ -78,16 +79,19 @@ while True:
     else:
         # apos a jogada ser efetuada
         if jogador['bastao'] == 1:
+            mensage['troca'] = 1
             # se encontrou o jogador com o bastao, manda pro proximo
             jogador['bastao'] = 0
             addr = ((ip,7002))
 
             # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO
             client_socket.sendto(json.dumps(mensage,indent=2).encode('utf-8'), addr) 
+        elif mensage['troca'] == 0:
+            addr = ((ip ,7002))
+
+            # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO
+            client_socket.sendto(json.dumps(mensage,indent=2).encode('utf-8'), addr) 
         else: 
-            # AQUI ESTA ERRADO, ELE PEGA O PROXIMO QUE ESTA COM jogador['bastao'] == 0
-            # O CERTO É PEGAR O PROXIMO DEPOIS DO QUE ESTA COM jogador['bastao'] == 1
-            
             # proximo jogador a jogar
             jogador['bastao'] = 1
             # Criar um soquete UDP
@@ -102,6 +106,7 @@ while True:
                 'jogada'  : jogador['jogada'],
                 'aposta'  : jogador['aposta'],
                 'contador': 1,
+                'troca'   : 0,
             }
 
             addr = ((ip,7002))
