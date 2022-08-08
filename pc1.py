@@ -1,8 +1,10 @@
 #!/usr/bin/python 
 
-import socket 
+import socket
+import json
 
-pc1 = {
+jogador = {
+    'numero' : '1',
     'bastao' : 1, 
     'jogada' : '',
     'aposta' : '',
@@ -10,21 +12,22 @@ pc1 = {
     'sec'    : 1,
 }
 
-# JOGADA INICIA PELO PC1 ***************************************************
+# JOGADA INICIA PELO JOGADOR 1 ***************************************************
 # Criar um soquete UDP
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
 
-jogada = input("Informe sua jogada: ") 
+jogador['jogada'] = input("Informe sua jogada: ") 
+jogador['aposta'] = '1'
 
-pc1['jogada'] = jogada
-pc1['aposta'] = '1'
-
-mensage = 'O jogador 1 jogou ' + pc1['jogada'] + ', apostando ' + str(pc1['aposta']) + ' ficha(s)'
-
+mensage = {
+    'jogador' : jogador['numero'],
+    'jogada'  : jogador['jogada'],
+    'aposta'  : jogador['aposta'],
+}
 
 addr = (('192.168.0.108',7000))
 
-client_socket.sendto(mensage.encode(), addr) 
+client_socket.sendto(json.dumps(mensage,indent=2).encode('utf-8'), addr) 
 
 while True:
     # Criar um soquete UDP
@@ -39,7 +42,10 @@ while True:
     # Recebendo o pacote do cliente junto com o endereço de onde ele está vindo
     mensage, address = serv_socket.recvfrom(1024)
 
-    print(mensage.decode())
+    # DESCONVERTENDO BYTES PARA DICIONARIO
+    mensage = json.loads(mensage.decode('utf-8'))
+
+    print('O jogador ' + mensage['jogador'] + ' jogou ' + mensage['jogada'] + ', apostando ' + mensage['aposta'] + ' ficha(s)')
 
 
 
@@ -48,14 +54,15 @@ while True:
 
     cobrir = input("Deseja cobrir? (S/N) ")
     if cobrir == 'S':
-        pc1['aposta'] = input("Informe quantas fichas deseja apostar: ")
+        jogador['aposta'] = input("Informe quantas fichas deseja apostar: ")
 
-        mensage = 'O jogador 2 jogou ' + pc1['jogada'] + ', apostando ' + pc1['aposta'] + ' ficha(s)' 
-
-        addr = (('192.168.0.108',7000))
-        client_socket.sendto(mensage.encode(), addr)
-
-        continue
+        mensage = {
+            'jogador' : jogador['numero'],
+            'jogada'  : mensage['jogada'],
+            'aposta'  : jogador['aposta'],
+        }
 
     addr = (('192.168.0.108',7000))
-    client_socket.sendto(mensage, addr) 
+
+    # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO
+    client_socket.sendto(json.dumps(mensage,indent=2).encode('utf-8'), addr) 
