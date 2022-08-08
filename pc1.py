@@ -28,6 +28,7 @@ mensage = {
     'jogada'  : jogador['jogada'],
     'aposta'  : jogador['aposta'],
     'contador': 1,
+    'troca'   : 0,
 }
 
 addr = ((ip,7000))
