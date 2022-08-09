@@ -5,7 +5,7 @@ LOCAL_HOST = '127.0.0.1'
 
 
 def jogada():
-    return 1;
+    return 1
 
 
 def run_player(jogador, recv_port, send_port):
