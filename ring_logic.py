@@ -1,11 +1,50 @@
 import socket
 import json
+import random
 
 LOCAL_HOST = '127.0.0.1'
 
+fichas = {
+    '1 PAR'             : 2,
+    '1 TRIO'            : 3,
+    '2 PARES'           : 4,
+    '1 FULL HOUSE'      : 5,
+    '1 SEQUENCIA BAIXA' : 7,
+    '1 SEQUENCIA ALTA'  : 7,
+    '1 QUADRA'          : 10,
+    '1 QUINTETO'        : 15, 
+}
+
+def jogar_novamente(n, atual):
+    joga = input('Deseja jogar o dado '+str(n)+' novamente? (S/N) ')
+    if joga == 'S':
+        return random.randint(1, 6)
+    else:
+        return atual
 
 def jogada():
-    return 1
+    dado1 = random.randint(1, 6)
+    dado2 = random.randint(1, 6)
+    dado3 = random.randint(1, 6)
+    dado4 = random.randint(1, 6)
+    dado5 = random.randint(1, 6)
+    for i in range(2):
+        print('O resultado da jogada é:')
+        print(str(dado1)+' '+str(dado2)+' '+str(dado3)+' '+str(dado4)+' '+str(dado5))
+        print()
+        dado1 = jogar_novamente(1, dado1)
+        dado2 = jogar_novamente(2, dado2)
+        dado3 = jogar_novamente(3, dado3)
+        dado4 = jogar_novamente(4, dado4)
+        dado5 = jogar_novamente(5, dado5)
+        print()
+    print('O resultado da jogada é:')
+    print(str(dado1)+' '+str(dado2)+' '+str(dado3)+' '+str(dado4)+' '+str(dado5))
+    print()
+
+    # AQUI DEVE SER FEITA A LOGICA PARA VERIFICAR SE O RESULTADO FINAL DOS DADOS É IGUAL A APOSTA FEITA
+
+    return 0
 
 
 def run_player(jogador, recv_port, send_port):
@@ -19,12 +58,19 @@ def run_player(jogador, recv_port, send_port):
 
         # DESCONVERTENDO BYTES PARA DICIONARIO
         mensage = json.loads(mensage.decode('utf-8'))
+        if mensage['exit'] == 1:
+            print()
+            print('O jogo acabou, o jogador numero '+mensage['jogador']+' esta sem ficha!')
+            send_sock.sendto(json.dumps(mensage,indent=2).encode('utf-8'), ((LOCAL_HOST,send_port)))
+            exit()
 
         if(mensage['contador'] == 0 and mensage['cont_resul'] < 4 and mensage['ganhador'] != jogador['numero']):
+            print()
             if mensage['resultado'] == 1:
                 print('O jogador '+ mensage['ganhador'] + ' ganhou a aposta')
             else:
                 print('O jogador '+ mensage['ganhador'] + ' perdeu a aposta')
+            print()
             mensage['cont_resul'] += 1
 
             # passa pro proximo
@@ -59,6 +105,7 @@ def run_player(jogador, recv_port, send_port):
                         'ganhador'  : '', 
                         'cont_resul': 1,
                         'troca'     : 0,
+                        'exit'      : 0,
                     }
 
                 # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO
@@ -67,13 +114,22 @@ def run_player(jogador, recv_port, send_port):
                 # caso tenha dado a volta
                 if jogador['aposta'] == mensage['aposta']:
                     # verifica se o jogador atual é quem vai fazer a jogada
+                    print()
                     print('O jogador ' + jogador['numero'] + ' vai jogar')
+                    print()
                     # AQUI DEVE SER FEITO O ROLE DAS JOGADAS
                     mensage['resultado'] = jogada()
                     if(mensage['resultado'] == 1):
                         print('PARABENS, VOCÊ GANHOU!')
+                        jogador['fichas'] += fichas[jogador['jogada']]
                     else:
                         print('NÃO FOI DESSA VEZ, VOCÊ PERDEU')
+                        jogador['fichas'] -= fichas[jogador['jogada']]
+                        if jogador['fichas'] <= 0:
+                            print('O jogo acabou, o jogador numero '+jogador['numero']+' esta sem ficha!')
+                            mensage['exit'] = 1
+                            send_sock.sendto(json.dumps(mensage,indent=2).encode('utf-8'), ((LOCAL_HOST,send_port)))
+                            exit()
                     mensage['contador'] = 0
                     mensage['ganhador'] = jogador['numero']
 
@@ -113,6 +169,7 @@ def run_player(jogador, recv_port, send_port):
                     'contador'  : 1,
                     'cont_resul': 1,
                     'troca'     : 0,
+                    'exit'      : 0,
                 }
 
                 # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO

@@ -20,6 +20,7 @@ jogador = {
 if __name__ == "__main__":
     print('O JOGO COMEÇOU!')
     print('Aguarde sua vez!')
+    print()
     ring_logic.run_player(jogador, RECEBE_DE, ENVIA_PRA)
 
     

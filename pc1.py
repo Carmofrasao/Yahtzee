@@ -31,6 +31,7 @@ def init_partida():
         'contador'  : 1,
         'cont_resul': 1,
         'troca'     : 0,
+        'exit'      : 0,
     }
 
     send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
