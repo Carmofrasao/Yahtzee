@@ -117,6 +117,7 @@ def run_player(jogador, recv_port, send_port):
                     print()
                     print('O jogador ' + jogador['numero'] + ' vai jogar')
                     print()
+                    jogador['fichas'] -= jogador['aposta']
                     # AQUI DEVE SER FEITO O ROLE DAS JOGADAS
                     mensage['resultado'] = jogada()
                     if(mensage['resultado'] == 1):
