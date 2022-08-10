@@ -23,29 +23,19 @@ def jogar_novamente(n, atual):
         return atual
 
 def jogada():
-    dado1 = random.randint(1, 6)
-    dado2 = random.randint(1, 6)
-    dado3 = random.randint(1, 6)
-    dado4 = random.randint(1, 6)
-    dado5 = random.randint(1, 6)
+    arr = list()
+    for i in range(0, 5):
+        arr.append(random.randint(1, 6))
+    
     for i in range(2):
-        print('O resultado da jogada é:')
-        print(str(dado1)+' '+str(dado2)+' '+str(dado3)+' '+str(dado4)+' '+str(dado5))
-        print()
-        dado1 = jogar_novamente(1, dado1)
-        dado2 = jogar_novamente(2, dado2)
-        dado3 = jogar_novamente(3, dado3)
-        dado4 = jogar_novamente(4, dado4)
-        dado5 = jogar_novamente(5, dado5)
-        print()
-    print('O resultado da jogada é:')
-    print(str(dado1)+' '+str(dado2)+' '+str(dado3)+' '+str(dado4)+' '+str(dado5))
-    print()
+        print(f"o resultado da jogada é: {arr}")
+        inp = list(map(int, input("mude os dados: ").split()))
+        for i in inp:
+            arr[i-1] = random.randint(1, 6)
 
     # AQUI DEVE SER FEITA A LOGICA PARA VERIFICAR SE O RESULTADO FINAL DOS DADOS É IGUAL A APOSTA FEITA
 
     return 0
-
 
 def run_player(jogador, recv_port, send_port):
     send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
@@ -122,10 +112,10 @@ def run_player(jogador, recv_port, send_port):
                     mensage['resultado'] = jogada()
                     if(mensage['resultado'] == 1):
                         print('PARABENS, VOCÊ GANHOU!')
-                        jogador['fichas'] += fichas[jogador['jogada']]
+                        jogador['fichas'] += fichas[mensage['jogada']]
                     else:
                         print('NÃO FOI DESSA VEZ, VOCÊ PERDEU')
-                        jogador['fichas'] -= fichas[jogador['jogada']]
+                        jogador['fichas'] -= fichas[mensage['jogada']]
                         if jogador['fichas'] <= 0:
                             print('O jogo acabou, o jogador numero '+jogador['numero']+' esta sem ficha!')
                             mensage['exit'] = 1
