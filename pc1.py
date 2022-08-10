@@ -39,6 +39,7 @@ def init_partida():
 
         
 if __name__ == "__main__":
+    print('O JOGO COMEÇOU!')
     init_partida()
     ring_logic.run_player(jogador, RECEBE_DE, ENVIA_PRA)
 
