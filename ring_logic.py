@@ -15,24 +15,22 @@ fichas = {
     '1 QUINTETO'        : 15, 
 }
 
-def jogar_novamente(n, atual):
-    joga = input('Deseja jogar o dado '+str(n)+' novamente? (S/N) ')
-    if joga == 'S':
-        return random.randint(1, 6)
-    else:
-        return atual
-
 def jogada():
     arr = list()
     for i in range(0, 5):
         arr.append(random.randint(1, 6))
     
     for i in range(2):
-        print(f"o resultado da jogada é: {arr}")
-        inp = list(map(int, input("mude os dados: ").split()))
+        print('Rodada '+str(i+1))
+        print(arr)
+        print()
+        inp = list(map(int, input("Quais dados deseja jogar novamente: ").split()))
+        print()
         for i in inp:
             arr[i-1] = random.randint(1, 6)
-
+    print('Rodada 3')
+    print(arr)
+    print()
     # AQUI DEVE SER FEITA A LOGICA PARA VERIFICAR SE O RESULTADO FINAL DOS DADOS É IGUAL A APOSTA FEITA
 
     return 0
