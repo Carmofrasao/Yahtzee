@@ -20,6 +20,7 @@ jogador = {
 def init_partida():
     # jogador um define qual jogada ele quer fazer 
     jogador['jogada'] = input("Informe sua jogada: ") 
+    jogador['jogada'] = jogador['jogada'].upper()
     jogador['aposta'] = 1
 
     mensage = {
