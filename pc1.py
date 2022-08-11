@@ -27,6 +27,7 @@ def init_partida():
         'jogada'    : jogador['jogada'],
         'aposta'    : jogador['aposta'],
         'resultado' : 0,
+        'fichas'    : 0,
         'ganhador'  : '', 
         'contador'  : 1,
         'cont_resul': 1,

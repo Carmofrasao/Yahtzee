@@ -134,9 +134,9 @@ def run_player(jogador, recv_port, send_port):
         if(mensage['contador'] == 0 and mensage['cont_resul'] < 4 and mensage['ganhador'] != jogador['numero']):
             print()
             if mensage['resultado'] == 1:
-                print('O jogador '+ mensage['ganhador'] + ' ganhou a aposta')
+                print('O jogador '+ mensage['ganhador'] + ' ganhou a aposta, ficando com '+str(mensage['fichas'])+' fichas')
             else:
-                print('O jogador '+ mensage['ganhador'] + ' perdeu a aposta')
+                print('O jogador '+ mensage['ganhador'] + ' perdeu a aposta, ficando com '+str(mensage['fichas'])+' fichas')
             print()
             mensage['cont_resul'] += 1
 
@@ -168,6 +168,7 @@ def run_player(jogador, recv_port, send_port):
                         'jogada'    : mensage['jogada'],
                         'aposta'    : jogador['aposta'],
                         'contador'  : mensage['contador'],
+                        'fichas'    : 0,
                         'resultado' : 0,
                         'ganhador'  : '', 
                         'cont_resul': 1,
@@ -185,14 +186,25 @@ def run_player(jogador, recv_port, send_port):
                     print('O jogador ' + jogador['numero'] + ' vai jogar')
                     print()
                     jogador['fichas'] -= jogador['aposta']
-                    # AQUI DEVE SER FEITO O ROLE DAS JOGADAS
                     mensage['resultado'] = jogada(mensage['jogada'])
                     if(mensage['resultado'] == 1):
                         print('PARABENS, VOCÊ GANHOU!')
+                        print()
                         jogador['fichas'] += fichas[mensage['jogada']]
+                        mensage['fichas'] = jogador['fichas']
+                        print('Seu saldo é de '+str(jogador['fichas'])+' fichas')
+                        print()
+                        if jogador['fichas'] <= 0:
+                            print('Infelizmente você esta sem ficha!')
+                            mensage['exit'] = 1
+                            send_sock.sendto(json.dumps(mensage,indent=2).encode('utf-8'), ((LOCAL_HOST,send_port)))
+                            exit()
                     else:
                         print('NÃO FOI DESSA VEZ, VOCÊ PERDEU')
                         print()
+                        print('Seu saldo é de '+str(jogador['fichas'])+' fichas')
+                        print()
+                        mensage['fichas'] = jogador['fichas']
                         if jogador['fichas'] <= 0:
                             print('O jogo acabou, o jogador numero '+jogador['numero']+' esta sem ficha!')
                             mensage['exit'] = 1
@@ -232,6 +244,7 @@ def run_player(jogador, recv_port, send_port):
                     'jogador'   : jogador['numero'],
                     'jogada'    : jogador['jogada'],
                     'aposta'    : jogador['aposta'],
+                    'fichas'    : 0,
                     'resultado' : 0,
                     'ganhador'  : '', 
                     'contador'  : 1,
