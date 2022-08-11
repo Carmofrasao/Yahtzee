@@ -15,7 +15,72 @@ fichas = {
     '1 QUINTETO'        : 15, 
 }
 
-def jogada():
+def par(dados):
+    for i in range(1, 7):
+        if dados.count(i) >= 2:
+            return 1
+    return 0
+
+def trio(dados):
+    for i in range(1, 7):
+        if dados.count(i) >= 3:
+            return 1
+    return 0
+
+def pares(dados):
+    p_i = 0
+    for i in range(1, 7):
+        if dados.count(i) >= 2:
+            p_i = i
+            break
+    for i in range(1, 7):
+        if dados.count(i) >= 2 and i != p_i:
+            return 1
+    return 0
+
+def full(dados):
+    p_i = 0
+    for i in range(1, 7):
+        if dados.count(i) >= 2:
+            p_i = i
+            break
+    for i in range(1, 7):
+        if dados.count(i) >= 3 and i != p_i:
+            return 1
+    return 0
+
+def seq_b(dados):
+    if dados[0] == 1:
+        for i in range(1, 5):
+            if dados[i] != i+1:
+                return 0
+        return 1
+    else:
+        return 0
+
+def seq_a(dados):
+    if dados[0] == 2:
+        for i in range(1, 5):
+            print(dados[i])
+            if dados[i] != i+1:
+                return 0
+        return 1
+    else:
+        return 0
+
+def quadra(dados):
+    for i in range(1, 7):
+        if dados.count(i) >= 4:
+            return 1
+    return 0
+
+def quinteto(dados):
+    for i in range(1, 7):
+        if dados.count(i) >= 5:
+            return 1
+    return 0
+
+def jogada(jogada):
     arr = list()
     for i in range(0, 5):
         arr.append(random.randint(1, 6))
@@ -31,10 +96,24 @@ def jogada():
     print('Rodada 3')
     print(arr)
     print()
-    # AQUI DEVE SER FEITA A LOGICA PARA VERIFICAR SE O RESULTADO FINAL DOS DADOS É IGUAL A APOSTA FEITA
 
-    return 0
-
+    if jogada == '1 PAR':
+        return par(arr)
+    elif jogada == '1 TRIO':
+        return trio(arr)
+    elif jogada == '2 PARES':
+        return pares(arr)
+    elif jogada == '1 FULL HOUSE':
+        return full(arr)
+    elif jogada == '1 SEQUENCIA BAIXA':
+        return seq_b(arr)
+    elif jogada == '1 SEQUENCIA ALTA':
+        return seq_a(arr)
+    elif jogada == '1 QUADRA':
+        return quadra(arr)
+    elif jogada == '1 QUINTETO':
+        return quinteto(arr)
+    
 def run_player(jogador, recv_port, send_port):
     send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
     recv_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
@@ -107,13 +186,13 @@ def run_player(jogador, recv_port, send_port):
                     print()
                     jogador['fichas'] -= jogador['aposta']
                     # AQUI DEVE SER FEITO O ROLE DAS JOGADAS
-                    mensage['resultado'] = jogada()
+                    mensage['resultado'] = jogada(mensage['jogada'])
                     if(mensage['resultado'] == 1):
                         print('PARABENS, VOCÊ GANHOU!')
                         jogador['fichas'] += fichas[mensage['jogada']]
                     else:
                         print('NÃO FOI DESSA VEZ, VOCÊ PERDEU')
-                        jogador['fichas'] -= fichas[mensage['jogada']]
+                        print()
                         if jogador['fichas'] <= 0:
                             print('O jogo acabou, o jogador numero '+jogador['numero']+' esta sem ficha!')
                             mensage['exit'] = 1
