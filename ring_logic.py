@@ -50,6 +50,7 @@ def full(dados):
     return 0
 
 def seq_b(dados):
+    dados.sort()
     if dados[0] == 1:
         for i in range(1, 5):
             if dados[i] != i+1:
@@ -59,6 +60,7 @@ def seq_b(dados):
         return 0
 
 def seq_a(dados):
+    dados.sort()
     if dados[0] == 2:
         for i in range(1, 5):
             print(dados[i])
