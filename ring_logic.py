@@ -135,9 +135,9 @@ def run_player(jogador, recv_port, send_port):
         if(mensage['contador'] == 0 and mensage['cont_resul'] < 4 and mensage['ganhador'] != jogador['numero']):
             print()
             if mensage['resultado'] == 1:
-                print('O jogador '+ str(mensage['ganhador']) + ' ganhou a aposta, ficando com '+str(mensage['fichas'])+' fichas')
+                print('O jogador '+ str(mensage['ganhador']+1) + ' ganhou a aposta, ficando com '+str(mensage['fichas'])+' fichas')
             else:
-                print('O jogador '+ str(mensage['ganhador']) + ' perdeu a aposta, ficando com '+str(mensage['fichas'])+' fichas')
+                print('O jogador '+ str(mensage['ganhador']+1) + ' perdeu a aposta, ficando com '+str(mensage['fichas'])+' fichas')
             print()
             mensage['cont_resul'] += 1
 
