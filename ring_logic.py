@@ -5,14 +5,14 @@ import random
 LOCAL_HOST = '127.0.0.1'
 
 fichas = {
-    '1 PAR'             : 2,
-    '1 TRIO'            : 3,
-    '2 PARES'           : 4,
-    '1 FULL HOUSE'      : 5,
-    '1 SEQUENCIA BAIXA' : 7,
-    '1 SEQUENCIA ALTA'  : 7,
-    '1 QUADRA'          : 10,
-    '1 QUINTETO'        : 15, 
+    0   : 2,
+    1   : 3,
+    2   : 4,
+    3   : 5,
+    4   : 7,
+    5   : 7,
+    6   : 10,
+    7   : 15, 
 }
 
 def par(dados):
@@ -63,7 +63,6 @@ def seq_a(dados):
     dados.sort()
     if dados[0] == 2:
         for i in range(1, 5):
-            print(dados[i])
             if dados[i] != i+1:
                 return 0
         return 1
@@ -99,21 +98,21 @@ def jogada(jogada):
     print(arr)
     print()
 
-    if jogada == '1 PAR':
+    if jogada == 0:
         return par(arr)
-    elif jogada == '1 TRIO':
+    elif jogada == 1:
         return trio(arr)
-    elif jogada == '2 PARES':
+    elif jogada == 2:
         return pares(arr)
-    elif jogada == '1 FULL HOUSE':
+    elif jogada == 3:
         return full(arr)
-    elif jogada == '1 SEQUENCIA BAIXA':
+    elif jogada == 4:
         return seq_b(arr)
-    elif jogada == '1 SEQUENCIA ALTA':
+    elif jogada == 5:
         return seq_a(arr)
-    elif jogada == '1 QUADRA':
+    elif jogada == 6:
         return quadra(arr)
-    elif jogada == '1 QUINTETO':
+    elif jogada == 7:
         return quinteto(arr)
     
 def run_player(jogador, recv_port, send_port):
@@ -129,16 +128,16 @@ def run_player(jogador, recv_port, send_port):
         mensage = json.loads(mensage.decode('utf-8'))
         if mensage['exit'] == 1:
             print()
-            print('O jogo acabou, o jogador numero '+mensage['jogador']+' esta sem ficha!')
+            print('O jogo acabou, o jogador numero '+str(mensage['jogador']+1)+' esta sem ficha!')
             send_sock.sendto(json.dumps(mensage,indent=2).encode('utf-8'), ((LOCAL_HOST,send_port)))
             exit()
 
         if(mensage['contador'] == 0 and mensage['cont_resul'] < 4 and mensage['ganhador'] != jogador['numero']):
             print()
             if mensage['resultado'] == 1:
-                print('O jogador '+ mensage['ganhador'] + ' ganhou a aposta, ficando com '+str(mensage['fichas'])+' fichas')
+                print('O jogador '+ str(mensage['ganhador']) + ' ganhou a aposta, ficando com '+str(mensage['fichas'])+' fichas')
             else:
-                print('O jogador '+ mensage['ganhador'] + ' perdeu a aposta, ficando com '+str(mensage['fichas'])+' fichas')
+                print('O jogador '+ str(mensage['ganhador']) + ' perdeu a aposta, ficando com '+str(mensage['fichas'])+' fichas')
             print()
             mensage['cont_resul'] += 1
 
@@ -154,7 +153,24 @@ def run_player(jogador, recv_port, send_port):
             
             if mensage['contador'] < 4:
 
-                print('O jogador ' + mensage['jogador'] + ' jogou ' + mensage['jogada'] + ', apostando ' + str(mensage['aposta']) + ' ficha(s)')
+                if mensage['jogada'] == 0:
+                    jogo = '1 PAR'
+                elif mensage['jogada'] == 1:
+                    jogo = '1 TRIO'
+                elif mensage['jogada'] == 2:
+                    jogo = '2 PARES'
+                elif mensage['jogada'] == 3:
+                    jogo = '1 FULL HOUSE'
+                elif mensage['jogada'] == 4:
+                    jogo = '1 SEQUENCIA BAIXA'
+                elif mensage['jogada'] == 5:
+                    jogo = '1 SEQUENCIA ALTA'
+                elif mensage['jogada'] == 6:
+                    jogo = '1 QUADRA'
+                elif mensage['jogada'] == 7:
+                    jogo = '1 QUINTETO'
+
+                print('O jogador ' + str(mensage['jogador']+1) + ' jogou ' + jogo + ', apostando ' + str(mensage['aposta']) + ' ficha(s)')
 
                 # caso nao tenha passado por todos os jogadores recolhendo suas jogadas
                 mensage['contador'] += 1
@@ -186,7 +202,7 @@ def run_player(jogador, recv_port, send_port):
                 if jogador['aposta'] == mensage['aposta']:
                     # verifica se o jogador atual é quem vai fazer a jogada
                     print()
-                    print('O jogador ' + jogador['numero'] + ' vai jogar')
+                    print('O jogador ' + str(jogador['numero']) + ' vai jogar')
                     print()
                     jogador['fichas'] -= jogador['aposta']
                     mensage['resultado'] = jogada(mensage['jogada'])
@@ -209,7 +225,7 @@ def run_player(jogador, recv_port, send_port):
                         print()
                         mensage['fichas'] = jogador['fichas']
                         if jogador['fichas'] <= 0:
-                            print('O jogo acabou, o jogador numero '+jogador['numero']+' esta sem ficha!')
+                            print('O jogo acabou, o jogador numero '+str(jogador['numero'])+' esta sem ficha!')
                             mensage['exit'] = 1
                             send_sock.sendto(json.dumps(mensage,indent=2).encode('utf-8'), ((LOCAL_HOST,send_port)))
                             exit()
@@ -244,13 +260,30 @@ def run_player(jogador, recv_port, send_port):
                 jogador['jogada'] = jogador['jogada'].upper()
                 jogador['aposta'] = 1
 
+                if jogador['jogada'] == '1 PAR':
+                    mensage['jogada'] = 0
+                elif jogador['jogada'] == '1 TRIO':
+                    mensage['jogada'] = 1
+                elif jogador['jogada'] == '2 PARES':
+                    mensage['jogada'] = 2
+                elif jogador['jogada'] == '1 FULL HOUSE':
+                    mensage['jogada'] = 3
+                elif jogador['jogada'] == '1 SEQUENCIA BAIXA':
+                    mensage['jogada'] = 4
+                elif jogador['jogada'] == '1 SEQUENCIA ALTA':
+                    mensage['jogada'] = 5
+                elif jogador['jogada'] == '1 QUADRA':
+                    mensage['jogada'] = 6
+                elif jogador['jogada'] == '1 QUINTETO':
+                    mensage['jogada'] = 7
+
                 mensage = {
                     'jogador'   : jogador['numero'],
                     'jogada'    : jogador['jogada'],
                     'aposta'    : jogador['aposta'],
                     'fichas'    : 0,
                     'resultado' : 0,
-                    'ganhador'  : '', 
+                    'ganhador'  : 0, 
                     'contador'  : 1,
                     'cont_resul': 1,
                     'troca'     : 0,

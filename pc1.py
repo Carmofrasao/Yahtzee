@@ -8,7 +8,7 @@ ENVIA_PRA = 7000
 
 # estrutura relativa ao jogador 1
 jogador = {
-    'numero' : '1',
+    'numero' : 0,
     'bastao' : 1, 
     'jogada' : '',
     'aposta' : 0,
@@ -25,16 +25,32 @@ def init_partida():
 
     mensage = {
         'jogador'   : jogador['numero'],
-        'jogada'    : jogador['jogada'],
         'aposta'    : jogador['aposta'],
         'resultado' : 0,
         'fichas'    : 0,
-        'ganhador'  : '', 
+        'ganhador'  : 0, 
         'contador'  : 1,
         'cont_resul': 1,
         'troca'     : 0,
         'exit'      : 0,
     }
+
+    if jogador['jogada'] == '1 PAR':
+        mensage['jogada'] = 0
+    elif jogador['jogada'] == '1 TRIO':
+        mensage['jogada'] = 1
+    elif jogador['jogada'] == '2 PARES':
+        mensage['jogada'] = 2
+    elif jogador['jogada'] == '1 FULL HOUSE':
+        mensage['jogada'] = 3
+    elif jogador['jogada'] == '1 SEQUENCIA BAIXA':
+        mensage['jogada'] = 4
+    elif jogador['jogada'] == '1 SEQUENCIA ALTA':
+        mensage['jogada'] = 5
+    elif jogador['jogada'] == '1 QUADRA':
+        mensage['jogada'] = 6
+    elif jogador['jogada'] == '1 QUINTETO':
+        mensage['jogada'] = 7
 
     send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
     # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO

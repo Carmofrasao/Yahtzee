@@ -8,7 +8,7 @@ ENVIA_PRA = 7002
 
 # estrutura relativa ao jogador 3
 jogador = {
-    'numero' : '3',
+    'numero' : 2,
     'bastao' : 0, 
     'jogada' : '',
     'aposta' : 0,
