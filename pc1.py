@@ -53,8 +53,7 @@ def init_partida():
         mensage['jogada'] = 7
 
     send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
-    # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO
-    send_sock.sendto(json.dumps(mensage,indent=2).encode('utf-8'), ((ring_logic.LOCAL_HOST,ENVIA_PRA))) 
+    ring_logic.envia_msg(send_sock, mensage, ENVIA_PRA)
 
         
 if __name__ == "__main__":
