@@ -191,7 +191,7 @@ def run_player(jogador, recv_port, send_port):
 
                 cobrir = input("Deseja cobrir? (S/N) ")
                 cobrir = cobrir.upper()
-                if cobrir == 'S':
+                if cobrir[0] == 'S':
                     # verifica se o jogador atual deseja cobrir a aposta dos jogadores anteriores
 
                     jogador['aposta'] = mensage['aposta'] + 1
