@@ -27,6 +27,7 @@ mensagem_t = {
             'cont_resul': 0,    # itera sobre pcs aux  #  [0, 7]                # 3 bits
             'troca'     : 0,    # aux de passa bastao  #  [0, 1]                # 1 bit 
             'exit'      : 0,    # terminar o jogo      #  [0, 1]                # 1 bit 
+            'paridade'  : 0,    # paridade vertical    #  1 byte                # 32 bits
         }                       # TOTAL DE 10 BYTES A MENSAGEM INTEIRA
 
 
@@ -137,7 +138,7 @@ def run_player(jogador, recv_port, send_port):
     
     while True:
         # Recebendo o pacote do cliente junto com o endereço de onde ele está vindo
-        mensage = recebe_msg(recv_socket=recv_sock)
+        mensage = recebe_msg(recv_sock, send_sock, send_port)
 
         if mensage['exit'] == 1:
             print()
@@ -206,6 +207,7 @@ def run_player(jogador, recv_port, send_port):
                         'cont_resul': 1,
                         'troca'     : 0,
                         'exit'      : 0,
+                        'paridade'  : 0,
                     }
 
                 # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO
@@ -283,6 +285,7 @@ def run_player(jogador, recv_port, send_port):
                     'cont_resul': 1,
                     'troca'     : 0,
                     'exit'      : 0,
+                    'paridade'  : 0,
                 }
 
                 if jogador['jogada'] == '1 PAR':
@@ -334,8 +337,8 @@ def dict2bytes(mensagem:dict):
                 uint:2=ganhador, \
                 uint:3=cont_resul, \
                 uint:1=troca, \
-                uint:1=exit'
-    mensagem['jogador'] = int(mensagem['jogador'])
+                uint:1=exit, \
+                int:32=paridade'
 
     packet = bitstring.pack(format, **mensagem).bin
     return int(packet, 2).to_bytes((len(packet) + 7) // 8, byteorder='big')
@@ -364,7 +367,8 @@ def bytes2dict(bytes:bitstring.pack):
                 uint:2, \
                 uint:3, \
                 uint:1, \
-                uint:1'
+                uint:1, \
+                int:32'
 
     bytes = bitstring.BitStream(bytes)
     blist = bytes.readlist(extract)
@@ -377,12 +381,31 @@ def bytes2dict(bytes:bitstring.pack):
     # retorna dados em formato dicionario
     return bdict
 
-def recebe_msg(recv_socket:socket.socket):
-    stream, addr = recv_socket.recvfrom(10) # buffer de 10 bytes
+
+def recebe_msg(recv_socket:socket.socket, send_socket:socket.socket, port:int):
+    stream, addr = recv_socket.recvfrom(120) # buffer de 10 bytes
+    # compara com a paradidade da msg
+    # se deu algm coisa errada 'exit' == 1
     mensagem = bytes2dict(stream)
+    paradis = calc_paridade(mensagem)
+    if(paradis != mensagem['paridade']):
+        print(f"O jogo teve um erro critico: erro na paridade, terminando")
+        envia_msg(send_socket, mensagem, port)
+        exit()
+        
     return mensagem
 
 def envia_msg(send_socket:socket.socket, mensagem:dict, port:int):
+    mensagem['paridade'] = calc_paridade(mensagem)
     stream = dict2bytes(mensagem)
     send_socket.sendto(stream, ((LOCAL_HOST, port)))
     return
+
+def calc_paridade(data:dict):
+    paradis = 0
+    
+    for key, value in data.items():
+        if(key != 'paridade'):
+            paradis ^= value
+    
+    return paradis
