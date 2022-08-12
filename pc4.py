@@ -12,7 +12,7 @@ jogador = {
     'bastao' : 0, 
     'jogada' : '',
     'aposta' : 0,
-    'fichas' : 10,
+    'fichas' : 6,
     'sec'    : 1,
 }
 
