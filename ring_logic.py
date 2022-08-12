@@ -202,7 +202,7 @@ def run_player(jogador, recv_port, send_port):
                         'contador'  : mensage['contador'],
                         'fichas'    : 0,
                         'resultado' : 0,
-                        'ganhador'  : '', 
+                        'ganhador'  : 0, 
                         'cont_resul': 1,
                         'troca'     : 0,
                         'exit'      : 0,
@@ -273,6 +273,18 @@ def run_player(jogador, recv_port, send_port):
                 jogador['jogada'] = jogador['jogada'].upper()
                 jogador['aposta'] = 1
 
+                mensage = {
+                    'jogador'   : jogador['numero'],
+                    'aposta'    : jogador['aposta'],
+                    'fichas'    : 0,
+                    'resultado' : 0,
+                    'ganhador'  : 0, 
+                    'contador'  : 1,
+                    'cont_resul': 1,
+                    'troca'     : 0,
+                    'exit'      : 0,
+                }
+
                 if jogador['jogada'] == '1 PAR':
                     mensage['jogada'] = 0
                 elif jogador['jogada'] == '1 TRIO':
@@ -289,19 +301,6 @@ def run_player(jogador, recv_port, send_port):
                     mensage['jogada'] = 6
                 elif jogador['jogada'] == '1 QUINTETO':
                     mensage['jogada'] = 7
-
-                mensage = {
-                    'jogador'   : jogador['numero'],
-                    'jogada'    : jogador['jogada'],
-                    'aposta'    : jogador['aposta'],
-                    'fichas'    : 0,
-                    'resultado' : 0,
-                    'ganhador'  : 0, 
-                    'contador'  : 1,
-                    'cont_resul': 1,
-                    'troca'     : 0,
-                    'exit'      : 0,
-                }
 
                 # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO
                 envia_msg(send_sock, mensage, send_port) 
