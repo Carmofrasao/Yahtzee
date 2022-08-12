@@ -215,7 +215,7 @@ def run_player(jogador, recv_port, send_port):
                 if jogador['aposta'] == mensage['aposta']:
                     # verifica se o jogador atual é quem vai fazer a jogada
                     print()
-                    print('O jogador ' + str(jogador['numero']) + ' vai jogar')
+                    print('O jogador ' + str(jogador['numero']+1) + ' vai jogar')
                     print()
                     jogador['fichas'] -= jogador['aposta']
                     mensage['resultado'] = jogada(mensage['jogada'])
@@ -238,7 +238,7 @@ def run_player(jogador, recv_port, send_port):
                         print()
                         mensage['fichas'] = jogador['fichas']
                         if jogador['fichas'] <= 0:
-                            print('O jogo acabou, o jogador numero '+str(jogador['numero'])+' esta sem ficha!')
+                            print('O jogo acabou, o jogador numero '+str(jogador['numero']+1)+' esta sem ficha!')
                             mensage['exit'] = 1
                             envia_msg(send_sock, mensage, send_port)
                             exit()
