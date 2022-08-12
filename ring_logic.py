@@ -1,5 +1,5 @@
+import bitstring
 import socket
-import json
 import random
 
 LOCAL_HOST = '127.0.0.1'
@@ -14,6 +14,21 @@ fichas = {
     6   : 10,
     7   : 15, 
 }
+
+# formato da mensagem (NAO MUDAR, FERRA COM O dict2bytes E bytes2dict)
+mensagem_t = {
+            'aposta'    : 0,    # n fichas apostadas   #  [int]                 # 1 byte (32 bits)
+            'fichas'    : 0,    # fichas com o pc      #  [int]                 # 1 byte (32 bits)
+            'jogador'   : 0,    # id jogador           #  [0, 3]                # 2 bits
+            'jogada'    : 0,    # 1 trio,etc           #  [0, 7]                # 3 bits
+            'contador'  : 0,    # itera sobre pcs      #  [0, 7]                # 3 bits
+            'resultado' : 0,    # resultado da aposta  #  [0, 1]                # 1 bit   (ate aqui fecha 1 byte)
+            'ganhador'  : 0,    # quem ganhou          #  [0, 3] (jogador)      # 2 bits
+            'cont_resul': 0,    # itera sobre pcs aux  #  [0, 7]                # 3 bits
+            'troca'     : 0,    # aux de passa bastao  #  [0, 1]                # 1 bit 
+            'exit'      : 0,    # terminar o jogo      #  [0, 1]                # 1 bit 
+        }                       # TOTAL DE 10 BYTES A MENSAGEM INTEIRA
+
 
 def par(dados):
     for i in range(1, 7):
@@ -122,14 +137,12 @@ def run_player(jogador, recv_port, send_port):
     
     while True:
         # Recebendo o pacote do cliente junto com o endereço de onde ele está vindo
-        mensage, address = recv_sock.recvfrom(1024)
+        mensage = recebe_msg(recv_socket=recv_sock)
 
-        # DESCONVERTENDO BYTES PARA DICIONARIO
-        mensage = json.loads(mensage.decode('utf-8'))
         if mensage['exit'] == 1:
             print()
             print('O jogo acabou, o jogador numero '+str(mensage['jogador']+1)+' esta sem ficha!')
-            send_sock.sendto(json.dumps(mensage,indent=2).encode('utf-8'), ((LOCAL_HOST,send_port)))
+            envia_msg(send_sock, mensage, send_port)
             exit()
 
         if(mensage['contador'] == 0 and mensage['cont_resul'] < 4 and mensage['ganhador'] != jogador['numero']):
@@ -143,7 +156,7 @@ def run_player(jogador, recv_port, send_port):
 
             # passa pro proximo
             # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO
-            send_sock.sendto(json.dumps(mensage,indent=2).encode('utf-8'), ((LOCAL_HOST,send_port))) 
+            envia_msg(send_sock, mensage, send_port) 
 
             continue
 
@@ -196,7 +209,7 @@ def run_player(jogador, recv_port, send_port):
                     }
 
                 # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO
-                send_sock.sendto(json.dumps(mensage,indent=2).encode('utf-8'), ((LOCAL_HOST,send_port))) 
+                envia_msg(send_sock, mensage, send_port) 
             else:
                 # caso tenha dado a volta
                 if jogador['aposta'] == mensage['aposta']:
@@ -216,7 +229,7 @@ def run_player(jogador, recv_port, send_port):
                         if jogador['fichas'] <= 0:
                             print('Infelizmente você esta sem ficha!')
                             mensage['exit'] = 1
-                            send_sock.sendto(json.dumps(mensage,indent=2).encode('utf-8'), ((LOCAL_HOST,send_port)))
+                            envia_msg(send_sock, mensage, send_port)
                             exit()
                     else:
                         print('NÃO FOI DESSA VEZ, VOCÊ PERDEU')
@@ -227,17 +240,17 @@ def run_player(jogador, recv_port, send_port):
                         if jogador['fichas'] <= 0:
                             print('O jogo acabou, o jogador numero '+str(jogador['numero'])+' esta sem ficha!')
                             mensage['exit'] = 1
-                            send_sock.sendto(json.dumps(mensage,indent=2).encode('utf-8'), ((LOCAL_HOST,send_port)))
+                            envia_msg(send_sock, mensage, send_port)
                             exit()
                     mensage['contador'] = 0
                     mensage['ganhador'] = jogador['numero']
 
                     # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO
-                    send_sock.sendto(json.dumps(mensage,indent=2).encode('utf-8'), ((LOCAL_HOST,send_port))) 
+                    envia_msg(send_sock, mensage, send_port) 
                 else:
                     # se não for o jogador, passa pro proximo
                     # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO
-                    send_sock.sendto(json.dumps(mensage,indent=2).encode('utf-8'), ((LOCAL_HOST,send_port))) 
+                    envia_msg(send_sock, mensage, send_port) 
         else:
             # apos a jogada ser efetuada
             if jogador['bastao'] == 1:
@@ -246,11 +259,11 @@ def run_player(jogador, recv_port, send_port):
                 jogador['bastao'] = 0
 
                 # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO
-                send_sock.sendto(json.dumps(mensage,indent=2).encode('utf-8'), ((LOCAL_HOST,send_port))) 
+                envia_msg(send_sock, mensage, send_port) 
             elif mensage['troca'] == 0:
 
                 # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO
-                send_sock.sendto(json.dumps(mensage,indent=2).encode('utf-8'), ((LOCAL_HOST,send_port))) 
+                envia_msg(send_sock, mensage, send_port) 
             else: 
                 # proximo jogador a jogar
                 jogador['bastao'] = 1
@@ -291,7 +304,86 @@ def run_player(jogador, recv_port, send_port):
                 }
 
                 # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO
-                send_sock.sendto(json.dumps(mensage,indent=2).encode('utf-8'), ((LOCAL_HOST,send_port))) 
-
-
+                envia_msg(send_sock, mensage, send_port) 
+                
+                
+def dict2bytes(mensagem:dict):
+    """Mensagem tem 10 campos e um total de 10 bytes, formato rigido de conversao aki
     
+    Fluxo: 
+    recebe dicionario; 
+    formata quantos bits para cada campo do dicionario;
+    empacota os campos do dicionario no formato especificado; 
+    transforma pacote em string binaria;
+    transforma string binaria em vetor de bytes;
+    retorna vetor de bytes;
+    
+    https://bitstring.readthedocs.io/en/latest/packing.html
+    
+    https://stackoverflow.com/questions/32675679/convert-binary-string-to-bytearray-in-python-3
+    """
+    
+    # aposta & fichas (int) em python tem 4 bytes = 32 bits
+    # TOTAL DE 10 BYTES
+    format = '\
+                int:32=aposta, \
+                int:32=fichas, \
+                uint:2=jogador, \
+                uint:3=jogada, \
+                uint:3=contador, \
+                uint:1=resultado, \
+                uint:2=ganhador, \
+                uint:3=cont_resul, \
+                uint:1=troca, \
+                uint:1=exit'
+    mensagem['jogador'] = int(mensagem['jogador'])
+
+    packet = bitstring.pack(format, **mensagem).bin
+    return int(packet, 2).to_bytes((len(packet) + 7) // 8, byteorder='big')
+
+def bytes2dict(bytes:bitstring.pack):
+    """Retorna um dicionario na mesma ordem em que ele foi compactado
+    
+    Fluxo:
+    Transfoma byteArray em bitstring;
+    Extrai conteudo de bitstring no formato especificado, em forma de lista;
+    Copia conteudo da lista para dicionario;
+
+    https://bitstring.readthedocs.io/en/latest/constbitstream.html#bitstring.ConstBitStream.readlist    
+
+    https://bitstring.readthedocs.io/en/latest/constbitarray.html#bitstring.Bits.unpack
+    """
+
+    # TOTAL DE 10 BYTES
+    extract = '\
+                int:32, \
+                int:32, \
+                uint:2, \
+                uint:3, \
+                uint:3, \
+                uint:1, \
+                uint:2, \
+                uint:3, \
+                uint:1, \
+                uint:1'
+
+    bytes = bitstring.BitStream(bytes)
+    blist = bytes.readlist(extract)
+    bdict = dict(mensagem_t)
+
+    # copia lista blist na ordem das chaves bdict
+    for i, key in enumerate(bdict.keys()):
+        bdict[key] = blist[i]
+    
+    # retorna dados em formato dicionario
+    return bdict
+
+def recebe_msg(recv_socket:socket.socket):
+    stream, addr = recv_socket.recvfrom(10) # buffer de 10 bytes
+    mensagem = bytes2dict(stream)
+    return mensagem
+
+def envia_msg(send_socket:socket.socket, mensagem:dict, port:int):
+    stream = dict2bytes(mensagem)
+    send_socket.sendto(stream, ((LOCAL_HOST, port)))
+    return
