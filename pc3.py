@@ -1,7 +1,5 @@
 #!/usr/bin/python 
 import ring_logic
-import socket 
-import json
 
 RECEBE_DE = 7001
 ENVIA_PRA = 7002
