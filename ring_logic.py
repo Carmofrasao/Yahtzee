@@ -70,11 +70,11 @@ def pares(dados):
 def full(dados):
     p_i = 0
     for i in range(1, 7):
-        if dados.count(i) >= 2:
+        if dados.count(i) >= 3:
             p_i = i
             break
     for i in range(1, 7):
-        if dados.count(i) >= 3 and i != p_i:
+        if dados.count(i) >= 2 and i != p_i and p_i != 0:
             return 1
     return 0
 
