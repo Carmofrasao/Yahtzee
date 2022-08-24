@@ -18,6 +18,7 @@ jogador = {
 # ************************* JOGADA INICIA PELO JOGADOR 1 **************************
 def init_partida():
     # jogador um define qual jogada ele quer fazer 
+    ring_logic.possiveis_jogadas()
     jogador['jogada'] = input("Informe sua jogada: ") 
     jogador['jogada'] = jogador['jogada'].upper()
     jogador['aposta'] = 1

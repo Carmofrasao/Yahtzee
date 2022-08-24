@@ -30,6 +30,19 @@ mensagem_t = {
             'paridade'  : 0,    # paridade vertical    #  1 byte                # 32 bits
         }                       # TOTAL DE 10 BYTES A MENSAGEM INTEIRA
 
+def possiveis_jogadas():
+    print()
+    print('POSSIVEIS JOGADAS')
+    print('-----------------')
+    print('1 SEQUENCIA BAIXA')
+    print('1 SEQUENCIA ALTA')
+    print('1 FULL HOUSE')
+    print('1 QUINTETO')
+    print('1 QUADRA')
+    print('2 PARES')
+    print('1 TRIO')
+    print('1 PAR')
+    print()
 
 def par(dados):
     for i in range(1, 7):
@@ -214,7 +227,7 @@ def run_player(jogador, recv_port, send_port):
                 envia_msg(send_sock, mensage, send_port) 
             else:
                 # caso tenha dado a volta
-                if jogador['aposta'] == mensage['aposta']:
+                if jogador['aposta'] == mensage['aposta'] and mensage['cont_resul'] >= 4:
                     # verifica se o jogador atual é quem vai fazer a jogada
                     print()
                     print('O jogador ' + str(jogador['numero']+1) + ' vai jogar')
@@ -246,11 +259,22 @@ def run_player(jogador, recv_port, send_port):
                             exit()
                     mensage['contador'] = 0
                     mensage['ganhador'] = jogador['numero']
+                    mensage['cont_resul'] = 1
 
                     # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO
                     envia_msg(send_sock, mensage, send_port) 
-                else:
+                elif jogador['aposta'] != mensage['aposta'] and mensage['cont_resul'] < 5 and mensage['cont_resul'] > 0:
+                    print()
+                    print('O jogador '+str(mensage['jogador']+1)+' vai jogar')
                     # se não for o jogador, passa pro proximo
+                    mensage['cont_resul'] += 1
+                    # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO
+                    envia_msg(send_sock, mensage, send_port) 
+                elif mensage['cont_resul'] < 5 and mensage['cont_resul'] > 0:
+                    mensage['cont_resul'] += 1
+                    # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO
+                    envia_msg(send_sock, mensage, send_port) 
+                elif mensage['cont_resul'] == 5:
                     # CONVERTENDO DICIONARIO PARA BYTES E MANDANDO A MENSAGEM PARA O PROXIMO
                     envia_msg(send_sock, mensage, send_port) 
         else:
@@ -271,6 +295,7 @@ def run_player(jogador, recv_port, send_port):
                 jogador['bastao'] = 1
 
                 # O proximo jogador faz a jogada
+                possiveis_jogadas()
                 jogador['jogada'] = input("Informe sua jogada: ") 
                 jogador['jogada'] = jogador['jogada'].upper()
                 jogador['aposta'] = 1
