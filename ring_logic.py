@@ -32,16 +32,16 @@ mensagem_t = {
 
 def possiveis_jogadas():
     print()
-    print('POSSIVEIS JOGADAS')
-    print('-----------------')
-    print('1 SEQUENCIA BAIXA')
-    print('1 SEQUENCIA ALTA')
-    print('1 FULL HOUSE')
-    print('1 QUINTETO')
-    print('1 QUADRA')
-    print('2 PARES')
-    print('1 TRIO')
-    print('1 PAR')
+    print('POSSIVEIS JOGADAS | GANHO (FICHAS)')
+    print('------------------|---------------')
+    print('1 SEQUENCIA BAIXA |       7')
+    print('1 SEQUENCIA ALTA  |       7')
+    print('1 FULL HOUSE      |       5')
+    print('1 QUINTETO        |       15')
+    print('1 QUADRA          |       10')
+    print('2 PARES           |       4')
+    print('1 TRIO            |       3')
+    print('1 PAR             |       2')
     print()
 
 def par(dados):
