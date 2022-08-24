@@ -230,7 +230,7 @@ def run_player(jogador, recv_port, send_port):
                 if jogador['aposta'] == mensage['aposta'] and mensage['cont_resul'] >= 4:
                     # verifica se o jogador atual é quem vai fazer a jogada
                     print()
-                    print('O jogador ' + str(jogador['numero']+1) + ' vai jogar')
+                    print('Você fez a maior apósta, faça sua jogada!')
                     print()
                     jogador['fichas'] -= jogador['aposta']
                     mensage['resultado'] = jogada(mensage['jogada'])
