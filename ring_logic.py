@@ -227,7 +227,7 @@ def run_player(jogador, recv_port, send_port):
                 envia_msg(send_sock, mensage, send_port) 
             else:
                 # caso tenha dado a volta
-                if jogador['aposta'] == mensage['aposta'] and mensage['cont_resul'] >= 4:
+                if jogador['aposta'] == mensage['aposta'] and jogador['numero'] == mensage['jogador'] and mensage['cont_resul'] >= 4:
                     # verifica se o jogador atual é quem vai fazer a jogada
                     print()
                     print('Você fez a maior apósta, faça sua jogada!')
