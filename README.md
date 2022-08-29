@@ -3,6 +3,7 @@ Trabalho 3 da materia de rede 1 da Universidade Federal do Paraná
 Feito por Anderson Frasão e Eduardo Gobbo.
 
 Objetivo
+
 Implementar o jogo desenvolvido em aula (uma variante do Yahtzee) com uma estrutura
 de comunicação em Rede em Anel com passagem de bastão.
 
