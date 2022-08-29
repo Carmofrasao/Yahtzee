@@ -1,4 +1,4 @@
-# trab3-redes
+# Yahtzee redes
 Trabalho 3 da materia de rede 1 da Universidade Federal do Paraná
 
 Feito por Anderson Frasão e Eduardo Gobbo.
