@@ -1,5 +1,5 @@
 # Yahtzee redes
-Trabalho 3 da materia de rede 1 da Universidade Federal do Paraná
+Trabalho 3 da materia de rede 1, no curso de Ciencia da Computação, da Universidade Federal do Paraná
 
 Feito por Anderson Frasão e Eduardo Gobbo.
 
