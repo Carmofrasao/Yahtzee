@@ -1,21 +1,20 @@
-# Yahtzee redes
-Trabalho 3 da materia de rede 1, no curso de Ciencia da Computação, da Universidade Federal do Paraná
+# Yahtzee
+Work for the Networking 1 subject in the Computer Science course at the Federal University of Paraná.
 
-Feito por Anderson Frasão e Eduardo Gobbo.
+Done by Anderson Frasão and Eduardo Gobbo.
 
-Objetivo
+Objective
 
-Implementar o jogo desenvolvido em aula (uma variante do Yahtzee) com uma estrutura
-de comunicação em Rede em Anel com passagem de bastão.
+To implement the game developed in class (a variant of Yahtzee) with a Ring Network communication structure with baton passing.
 
-Execução
+Implementation
 
-Devido ao uso de variáveis que necessitam menos de 8 bits para sua representação, foi utilizada uma biblioteca em python para manipular valores com n bits nos campos do pacote da mensagem. Para instalar este pacote, basta ter instalada a última versão de pip, e digitar
+Due to the use of variables that require less than 8 bits for their representation, a python library was used to manipulate values with n bits in the fields of the message package. To install this package, simply install the latest version of pip and type
 
->pip install bitstring
+> pip install bitstring
 
-Com a biblioteca instalada, basta executar 
+With the library installed, just run
 
 > python pcx.py
 
-Onde x representa o número da máquina de cada jogador, ou seja, inteiros de 1 a 4.
+Where x represents the machine number of each player, i.e. integers from 1 to 4.
